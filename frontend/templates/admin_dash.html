@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Ascentia</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            backdrop-filter: blur(10px);
+            background: rgba(33, 37, 41, 0.9) !important;
+        }
+
+        /* Professional Glass Cards with Bottom Borders */
+        .stat-card {
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .b-blue {
+            border-bottom: 5px solid #0d6efd !important;
+        }
+
+        .b-green {
+            border-bottom: 5px solid #198754 !important;
+        }
+
+        .b-cyan {
+            border-bottom: 5px solid #0dcaf0 !important;
+        }
+
+        .b-yellow {
+            border-bottom: 5px solid #ffc107 !important;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-dark mb-4 shadow-sm">
+        <div class="container">
+            <span class="navbar-brand fw-bold">Admin Dashboard</span>
+            <a href="/logout" class="btn btn-outline-light btn-sm px-4">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <div class="row g-4 mb-5 align-items-stretch">
+            <div class="col-md-3">
+                <div class="card stat-card h-100 p-4 text-center shadow-sm b-blue">
+                    <div class="d-flex flex-column justify-content-center h-100">
+                        <h6 class="text-uppercase text-muted small fw-bold mb-3">Total Students</h6>
+                        <h2 class="display-5 fw-bold text-primary mb-0">{{ stats.students }}</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card stat-card h-100 p-4 text-center shadow-sm b-green">
+                    <div class="d-flex flex-column justify-content-center h-100">
+                        <h6 class="text-uppercase text-muted small fw-bold mb-3">Companies</h6>
+                        <h2 class="display-5 fw-bold text-success mb-0">{{ stats.companies }}</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card stat-card h-100 p-4 text-center shadow-sm b-cyan">
+                    <div class="d-flex flex-column justify-content-center h-100">
+                        <h6 class="text-uppercase text-muted small fw-bold mb-3">Job Drives</h6>
+                        <h2 class="display-5 fw-bold text-info mb-0">{{ stats.drives }}</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card stat-card h-100 p-4 text-center shadow-sm b-yellow">
+                    <div class="d-flex flex-column justify-content-center h-100">
+                        <h6 class="text-uppercase text-muted small fw-bold mb-3">Applications</h6>
+                        <h2 class="display-5 fw-bold text-warning mb-0">{{ stats.applications }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+
+                <div class="mb-5">
+                    <h4 class="fw-bold text-dark mb-3">Pending Company Verifications</h4>
+                    <div class="table-container shadow-sm">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th class="ps-4">Company Name</th>
+                                    <th class="text-end pe-4">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for company in pending_companies %}
+                                <tr>
+                                    <td class="ps-4 fw-semibold">{{ company.company_name_full }}</td>
+                                    <td class="text-end pe-4">
+                                        <form action="/admin/approve_company/{{ company.id }}" method="POST"
+                                            class="d-inline">
+                                            <button class="btn btn-success btn-sm px-3">Approve</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="2" class="text-center py-4 text-muted italic">No pending company
+                                        registrations.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="mb-5">
+                    <h4 class="fw-bold text-dark mb-3">Approve Job Drives</h4>
+                    <div class="table-container shadow-sm">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th class="ps-4">Company</th>
+                                    <th>Job Title</th>
+                                    <th>Salary</th>
+                                    <th class="text-end pe-4">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for drive in drives %}
+                                <tr>
+                                    <td class="ps-4 fw-bold">{{ drive.company_name }}</td>
+                                    <td>{{ drive.job_title }}</td>
+                                    <td><span class="badge bg-light text-dark border">{{ drive.salary_range }}</span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <form action="/admin/approve_drive/{{ drive.id }}" method="POST"
+                                            class="d-inline">
+                                            <button class="btn btn-info btn-sm px-3 text-white">Approve Drive</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">All drives have been processed.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="mb-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="fw-bold text-dark mb-0">User Management</h4>
+                        <form action="/admin/search" method="GET" class="d-flex">
+                            <input type="text" name="query" class="form-control form-control-sm me-2 shadow-sm"
+                                style="width: 250px;" placeholder="Search Email or Name...">
+                            <button class="btn btn-dark btn-sm px-3 shadow-sm">Search</button>
+                        </form>
+                    </div>
+                    <div class="table-container shadow-sm">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th class="ps-4">Email Address</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th class="text-end pe-4">Management</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in all_users %}
+                                <tr>
+                                    <td class="ps-4">{{ user.email }}</td>
+                                    <td><span class="badge bg-secondary">{{ user.role }}</span></td>
+                                    <td>
+                                        <span class="badge {{ 'bg-success' if user.is_active == 1 else 'bg-danger' }}">
+                                            {{ "Active" if user.is_active == 1 else "Blacklisted" }}
+                                        </span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <form action="/admin/toggle_status/{{ user.id }}" method="POST">
+                                            <button
+                                                class="btn btn-sm {{ 'btn-outline-danger' if user.is_active == 1 else 'btn-outline-success' }} px-3">
+                                                {{ "Blacklist" if user.is_active == 1 else "Activate" }}
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center py-5 text-muted">
+        <hr class="w-25 mx-auto">
+        <small>&copy; MAD2: Ascentia Placement Portal Admin Panel</small>
+    </footer>
+
+</body>
+
+</html>

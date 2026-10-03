@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Post New Placement Drive</h4>
+                    <span class="badge bg-light text-primary">Status: Pending Admin Review</span>
+                </div>
+                <div class="card-body">
+                    <form action="/company/create_drive" method="POST">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Company Name (Display)</label>
+                                    <input type="text" name="company_name" class="form-control" placeholder="e.g. Google India" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Job Title</label>
+                                    <input type="text" name="job_title" class="form-control" placeholder="e.g. Data Analyst" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Salary Range</label>
+                                    <input type="text" name="salary_range" class="form-control" placeholder="e.g. 6 LPA - 10 LPA" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Required Skills</label>
+                                    <input type="text" name="skills_required" class="form-control" placeholder="e.g. Python, SQL, Tableau" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Experience Required</label>
+                                    <input type="text" name="experience" class="form-control" placeholder="e.g. Freshers / 0-1 Year" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Initial Posting Status</label>
+                                    <select name="drive_status" class="form-select">
+                                        <option value="Active">Active</option>
+                                        <option value="Closed">Closed</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Full Job Description</label>
+                            <textarea name="description" class="form-control" rows="5" placeholder="Mention eligibility criteria, selection process, and detailed responsibilities..." required></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">Submit for Admin Approval</button>
+                            <a href="/company/dashboard" class="btn btn-outline-secondary">Back to Dashboard</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

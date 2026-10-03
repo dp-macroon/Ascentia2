@@ -1,0 +1,226 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* Professional Glass Cards with Bottom Borders */
+    .stat-card {
+        border: none;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.9);
+        transition: transform 0.3s ease;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    .b-blue { border-bottom: 5px solid #0d6efd !important; }
+    .b-green { border-bottom: 5px solid #198754 !important; }
+    .b-info { border-bottom: 5px solid #0dcaf0 !important; }
+    
+    .glass-form {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+    }
+    
+    .job-card {
+        border-radius: 15px;
+        transition: all 0.3s ease;
+    }
+    .job-card:hover {
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+</style>
+
+<div class="container pb-5">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show shadow-sm border-0 mb-4" role="alert">
+            <i class="bi bi-bell-fill me-2"></i>{{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark">Student Dashboard</h2>
+        <span class="badge bg-dark px-3 py-2 shadow-sm">Welcome, {{ profile.full_name }}</span>
+    </div>
+
+    <div class="row g-4 mb-5 align-items-stretch">
+        <div class="col-md-4">
+            <div class="card stat-card h-100 p-4 text-center shadow-sm b-blue">
+                <div class="d-flex flex-column justify-content-center h-100">
+                    <h6 class="text-uppercase text-muted small fw-bold mb-3">Active Opportunities</h6>
+                    <h2 class="display-6 fw-bold text-primary mb-0">{{ drives|length }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card stat-card h-100 p-4 text-center shadow-sm b-green">
+                <div class="d-flex flex-column justify-content-center h-100">
+                    <h6 class="text-uppercase text-muted small fw-bold mb-3">Selection Status</h6>
+                    {% set offers = profile.user.my_applications | selectattr('status', 'equalto', 'Selected') | list %}
+                    <h2 class="display-6 fw-bold text-success mb-0">{{ offers|length }} Offers</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card stat-card h-100 p-4 text-center shadow-sm b-info">
+                <div class="d-flex flex-column justify-content-center h-100">
+                    <h6 class="text-uppercase text-muted small fw-bold mb-3">Profile Completion</h6>
+                    <div class="progress mb-2" style="height: 12px; border-radius: 10px;">
+                        <div class="progress-bar bg-info progress-bar-striped progress-bar-animated" 
+                            role="progressbar" 
+                            style="width: {{ progress }}%"></div>
+                    </div>
+                    <p class="small text-muted mb-0 fw-bold">{{ progress }}% Complete</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card glass-form shadow-sm p-4 mb-5 border-0">
+        <h4 class="fw-bold text-dark mb-4"><i class="bi bi-person-badge me-2 text-primary"></i>Professional Profile</h4>
+        
+        <div class="row">
+            <div class="col-md-3 text-center border-end pe-md-4">
+            <div class="mb-3 position-relative">
+                <img src="{{ url_for('static', filename='uploads/' + profile.profile_pic) }}" 
+                    alt="Profile" 
+                    class="rounded-circle shadow-sm border border-4 border-white mb-3" 
+                    width="120"
+                    onerror="this.src='https://ui-avatars.com/api/?name={{ profile.full_name }}'">
+                                
+                <form action="/student/upload_photo" method="POST" enctype="multipart/form-data">
+                    <input type="file" name="profile_pic" id="fileInput" class="d-none" onchange="this.form.submit()">
+                    <label for="fileInput" class="btn btn-outline-primary btn-sm w-100 mt-2">
+                        <i class="bi bi-camera me-1"></i> Change Photo
+                    </label>
+                </form>
+            </div>
+            <h5 class="fw-bold">{{ profile.full_name }}</h5>
+            <p class="text-muted small">Student ID: {{ profile.id }}</p>
+        </div>
+
+        <div class="col-md-9 ps-md-4">
+            <form action="/student/update_profile" method="POST">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Current CGPA</label>
+                        <input type="number" step="0.01" name="cgpa" class="form-control" 
+                               value="{{ profile.cgpa }}" placeholder="e.g. 8.5">
+                    </div>
+                    
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Technical Skills</label>
+                        <input type="text" name="skills" class="form-control" 
+                               value="{{ profile.skills }}" placeholder="Python, SQL...">
+                    </div>
+
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Resume Portfolio Link</label>
+                        <input type="url" name="resume" class="form-control" 
+                               value="{{ profile.resume_link }}" placeholder="https://...">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Placement Status</label>
+                        <select name="status" class="form-select">
+                            <option value="Opt-in" {% if profile.placement_status == 'Opt-in' %}selected{% endif %}>Opt-in</option>
+                            <option value="Opt-out" {% if profile.placement_status == 'Opt-out' %}selected{% endif %}>Opt-out</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-12 mt-3">
+                        <button type="submit" class="btn btn-primary px-4 fw-bold">Save Changes</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+    <h4 class="fw-bold text-dark mb-4 mt-5"><i class="bi bi-briefcase me-2"></i>Available Job Drives</h4>
+<div class="row">
+    {% for drive in drives %}
+    <div class="col-md-6 mb-4">
+        <div class="card job-card shadow-sm border-0 h-100">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h5 class="fw-bold text-primary mb-1">{{ drive.job_title }}</h5>
+                        <h6 class="text-muted small">{{ drive.company_name }}</h6>
+                    </div>
+                    <span class="badge {% if drive.drive_status == 'Closed' %}bg-danger{% else %}bg-soft-info text-info border border-info{% endif %} px-3">
+                        {{ drive.drive_status }}
+                    </span>
+                </div>
+                
+                <div class="bg-light p-3 rounded-3 mb-4">
+                    <div class="d-flex mb-2"><i class="bi bi-gear me-2"></i><small><strong>Skills:</strong> {{ drive.skills_required }}</small></div>
+                    <div class="d-flex mb-2"><i class="bi bi-cash-stack me-2"></i><small><strong>Package:</strong> {{ drive.salary_range }}</small></div>
+                    <div class="d-flex"><i class="bi bi-calendar-event me-2"></i><small><strong>Date:</strong> {{ drive.created_at.strftime('%b %d, %Y') if drive.created_at else 'Mar 07, 2026' }}</small></div>
+                </div>
+
+                {% if drive.drive_status == 'Closed' %}
+                    <button class="btn btn-secondary w-100 rounded-pill" disabled>Applications Closed</button>
+                {% elif profile.placement_status == 'Opt-in' %}
+                    <form action="/student/apply/{{ drive.id }}" method="POST">
+                        <button type="submit" class="btn btn-success w-100 rounded-pill fw-bold shadow-sm">Apply Now</button>
+                    </form>
+                {% else %}
+                    <button class="btn btn-outline-secondary w-100 rounded-pill" disabled>Opt-in to Apply</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center py-5">
+        <p class="text-muted italic">No active job drives found at the moment.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<h4 class="fw-bold text-dark mt-5 mb-4"><i class="bi bi-clock-history me-2"></i>Application History</h4>
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="bg-light">
+                <tr>
+                    <th class="ps-4">Company</th>
+                    <th>Role</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-end pe-4">Applied Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in profile.user.my_applications %}
+                <tr>
+                    <td class="ps-4 fw-bold">{{ app.drive.company_name }}</td>
+                    <td>{{ app.drive.job_title }}</td>
+                    <td class="text-center">
+                        <span class="badge rounded-pill px-3 py-2 
+                            {% if app.status == 'Selected' %}bg-success{% elif app.status == 'Rejected' %}bg-danger{% else %}bg-primary{% endif %}">
+                            {{ app.status }}
+                        </span>
+                    </td>
+                    <td class="text-end pe-4 text-muted">{{ app.applied_at.strftime('%d %b, %Y') }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4" class="text-center py-4 text-muted">No applications yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</div>
+    <footer class="text-center py-5 text-muted">
+        <hr class="w-25 mx-auto">
+        <small>&copy; Ascentia Placement Portal</small>
+    </footer>
+{% endblock %}

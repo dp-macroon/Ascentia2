@@ -1,0 +1,23 @@
+# SQLite Database files (DB created programmatically via init_db.py)
+*.db
+*.sqlite3
+instance/
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.venv/
+venv/
+ENV/
+
+# IDE / Editor config
+.vscode/
+.idea/
+*.swp
+
+# OS generated files
+.DS_Store
+Thumbs.db

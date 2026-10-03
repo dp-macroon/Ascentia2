@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow mx-auto" style="max-width: 500px;">
+        <div class="card-body">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+            <h2 class="text-center mb-4">Register Account</h2>
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" name="email" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">I am a...</label>
+                    <select name="role" class="form-select" required>
+                        <option value="student">Student</option>
+                        <option value="company">Company</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Full Name / Company Name</label>
+                    <input type="text" name="full_name" class="form-control" placeholder="Enter name" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Register</button>
+            </form>
+            <div class="mt-3 text-center">
+                Already have an account? <a href="/login">Login</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

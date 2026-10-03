@@ -1,0 +1,45 @@
+openapi: 3.0.0
+info:
+  title: Ascentia Placement Portal API
+  description: API endpoints for managing students, companies, and job drives.
+  version: 1.0.0
+
+paths:
+  /login:
+    post:
+      summary: Authenticate User
+      description: Validates credentials and returns a session for Admin, Student, or Company.
+      responses:
+        '200':
+          description: Login successful.
+        '401':
+          description: Invalid credentials.
+
+  /student/update_profile:
+    post:
+      summary: Update Student Profile
+      description: Updates CGPA, Skills, and Resume link for the logged-in student.
+      responses:
+        '200':
+          description: Profile updated successfully.
+
+  /company/create_drive:
+    post:
+      summary: Create Job Drive
+      description: Allows an approved company to post a new job opening for admin review.
+      responses:
+        '201':
+          description: Drive created and pending approval.
+
+  /admin/approve_drive/{id}:
+    post:
+      summary: Approve Placement Drive
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Drive approved and visible to students.

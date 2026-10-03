@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h3>Applicants for {{ drive.job_title }}</h3>
+    <div class="table-responsive bg-white shadow-sm rounded">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Student Name</th>
+                    <th>CGPA</th>
+                    <th>Resume</th>
+                    <th>Status</th>
+                    <th>Update Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app, profile in applicants %}
+                <tr>
+                    <td>{{ profile.full_name }}</td>
+                    <td>{{ profile.cgpa }}</td>
+                    <td><a href="{{ profile.resume_link }}" target="_blank" class="btn btn-sm btn-outline-info">View Resume</a></td>
+                    <td><span class="badge bg-secondary">{{ app.status }}</span></td>
+                    <td>
+                        <form action="/company/update_app_status/{{ app.id }}" method="POST" class="d-flex gap-1">
+                            <select name="new_status" class="form-select form-select-sm">
+                                <option value="Shortlisted">Shortlisted</option>
+                                <option value="Selected">Selected</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

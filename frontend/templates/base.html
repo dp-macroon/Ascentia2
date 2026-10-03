@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ascentia | Placement Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Modern Professional Background */
+        body {
+            background-color: #f8f9fa;
+            /* Multi-point mesh gradient using your theme colors */
+            background-image:
+                radial-gradient(at 0% 0%, rgba(13, 110, 253, 0.07) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(25, 135, 84, 0.07) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(13, 202, 240, 0.07) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(255, 193, 7, 0.05) 0px, transparent 50%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        /* Glassmorphism Navbar */
+        .navbar {
+            background: rgba(33, 37, 41, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(45deg, #fff, #adb5bd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-role-tag {
+            font-size: 0.85rem;
+            color: #adb5bd;
+            margin-right: 15px;
+        }
+
+        /* Unified Card container spacing */
+        .main-content {
+            padding-top: 2rem;
+            padding-bottom: 4rem;
+        }
+
+        /* Custom scrollbar for a professional feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #adb5bd;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6c757d;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top mb-4 shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="/">ASCENTIA PLACEMENT PORTAL</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto d-flex align-items-center">
+                    {% if session.get('user_id') %}
+                    <span class="nav-role-tag">
+                        Role: <span class="badge bg-primary text-uppercase">{{ session.get('role') }}</span>
+                    </span>
+                    <a href="/logout" class="btn btn-outline-light btn-sm rounded-pill px-3">Logout</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show shadow-sm border-0 border-start border-4 border-{{ category if category != 'message' else 'info' }}"
+            role="alert" style="background: white;">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
